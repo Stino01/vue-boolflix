@@ -7,14 +7,19 @@
         <div class="container">
             <div class="info" v-for="(data, index) in filmSeries" :key="index">
                 <ul>
+                    <!-- TITOLO -->
                     <li>
                         <strong>Titolo:</strong>
                         {{ data.title == null ? data.name : data.title }}
                     </li>
+
+                    <!-- TITOLO ORIGINALE -->
                     <li>
                         <strong>Titolo Originale:</strong>
                         {{ data.original_title == null ? data.original_name : data.original_title }}
                     </li>
+
+                    <!-- LINGUA -->
                     <li v-if="!flag.includes(data.original_language)">
                         <strong>Lingua:</strong>
                         {{data.original_language}}
@@ -23,10 +28,19 @@
                         <strong>Lingua:</strong>
                         <img class="flag" :src="require(`@/assets/img/${data.original_language}.png`)" :alt="data.original_language">
                     </li>
+
+                    <!-- VOTO -->
                     <li>
                         <strong>Voto:</strong>
-                        {{data.vote_average}}
+                        <span v-for="(stars, index) in Math.round(data.vote_average / 2)" :key="index">
+                            <font-awesome-icon :icon="['fas', 'star']"/>
+                        </span>
+                        <span v-for="(stars, index) in 5 - Math.round(data.vote_average / 2)" :key="index">
+                            <font-awesome-icon :icon="['far', 'star']"/>
+                        </span>
                     </li>
+                    
+                    <!-- POSTER -->
                     <li>
                         <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" class="cover">
                     </li>
