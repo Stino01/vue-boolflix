@@ -20,9 +20,9 @@
                     </li>
 
                     <!-- LINGUA -->
-                    <li v-if="!flag.includes(data.original_language)">
+                    <li v-if="!flag.includes(data.original_language)" class="language">
                         <strong>Lingua:</strong>
-                        {{data.original_language}}
+                        <img class="flag" src="@/assets/img/missing.png" :alt="data.original_language">
                     </li>
                     <li class="language" v-else>
                         <strong>Lingua:</strong>
@@ -39,10 +39,13 @@
                             <font-awesome-icon :icon="['far', 'star']"/>
                         </span>
                     </li>
-                    
+
                     <!-- POSTER -->
-                    <li>
+                    <li v-if="data.poster_path !== null">
                         <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" class="cover">
+                    </li>
+                    <li v-else>
+                        <img src="@/assets/img/poster.jpg" :alt="data.title == null ? data.name : data.title" class="cover">
                     </li>
                 </ul>
             </div>
