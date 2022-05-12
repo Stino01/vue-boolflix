@@ -1,29 +1,46 @@
 <template>
     <div>
         <!-- SEARCH -->
-        <div class="data">
-            <input type="text" v-model="inputText">
-            <button @click="getFilm">Cerca</button>
-        </div>
+        <header class="data">
+            <div class="left">
+                <img src="@/assets/img/logo.svg" alt="logo" class="logo">
+                <img src="@/assets/img/logo-small.svg" alt="logo-small" class="logo-small">
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Serie TV</a></li>
+                        <li><a href="#">Film</a></li>
+                        <li><a href="#">Nuovi e popolari</a></li>
+                        <li><a href="#">La mia lista</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="rigth">
+                <input type="text" v-model="inputText">
+                <button @click="getFilm"><font-awesome-icon :icon="['fas', 'magnifying-glass']"/></button>
+                <font-awesome-icon :icon="['fas', 'bell']" class="bell"/>
+                <img src="@/assets/img/user.jpg" alt="user" class="user">
+            </div>
+        </header>
 
         <!-- DATA -->
         <div class="container">
             <div class="info" v-for="(data, index) in filmSeries" :key="index">
                 <!-- POSTER -->
-                <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" v-if="data.poster_path !== null" class="cover" @mouseover="hover = true" @mouseleave="hover = false">
-                <img src="@/assets/img/poster.jpg" :alt="data.title == null ? data.name : data.title" v-else class="cover" @mouseover="hover = true" @mouseleave="hover = false">
-                <ul v-if="hover">
+                <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" v-if="data.poster_path !== null" class="cover">
+                <img src="@/assets/img/poster.jpg" :alt="data.title == null ? data.name : data.title" v-else class="cover">
+                <ul>
                      <!-- TITOLO -->
-                    <li>
-                        <strong>Titolo:</strong>
+                    <li class="title">
                         {{ data.title == null ? data.name : data.title }}
                     </li>
 
-                    <!-- TITOLO ORIGINALE -->
+                    <!-- TITOLO ORIGINALE 
                     <li>
                         <strong>Titolo Originale:</strong>
                         {{ data.original_title == null ? data.original_name : data.original_title }}
                     </li>
+                    -->
 
                     <!-- LINGUA -->
                     <li v-if="!flag.includes(data.original_language)" class="language">
@@ -36,7 +53,7 @@
                     </li>
 
                     <!-- VOTO -->
-                    <li>
+                    <li class="voto">
                         <strong>Voto:</strong>
                         <span v-for="(stars, index) in Math.round(data.vote_average / 2)" :key="index">
                             <font-awesome-icon :icon="['fas', 'star']"/>
@@ -46,7 +63,7 @@
                         </span>
                     </li>
                     <!-- VERVIEW -->
-                    <li>
+                    <li class="rias">
                         <strong>Overview:</strong>
                         {{data.overview}}
                     </li>
@@ -73,7 +90,6 @@ export default {
           seriesList: [],
           filmSeries: [],
           flag: ['it', 'en', 'es', 'fr'],
-          hover: false,
       }
   },
   methods: {
@@ -102,31 +118,102 @@ export default {
 <style lang="scss" scoped>
     .data {
         display: flex;
-        justify-content: center;
-        padding: 2em 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #141414;
 
-        input,
-        button {
-            padding: 10px;
-            margin: 0 5px;
-            border-radius: 10px;
+        .left,
+        .rigth {
+            display: flex;
+            align-items: center;
+            color: white;
+
+            .logo {
+                width: 10em;
+            }
+
+            .logo-small {
+                width: 2em;
+                padding: 0.2em;
+                margin-left: 1em;
+                display: none;
+            }
+
+            ul {
+                display: flex;
+                list-style-type: none;
+
+                li {
+                    padding: 0.4em;
+                    a {
+                        text-decoration: none;
+                         color: white;
+                        font-size: 0.9em;
+                    }
+                }
+            }
+
+            .user {
+                width: 2em;
+                border-radius: 5px;
+                margin: 0 1em;
+            }
+
+            input {
+                padding: 10px;
+                margin: 0 5px;
+                border: none;
+                border-radius: 10px;
+            }
+
+            button {
+                padding: 10px;
+                background-color: #141414;
+                border: none;
+                margin-right: 1em;
+                cursor: pointer;
+                color: white;
+            }
         }
     }
 
     .container {
         width: 90vw;
-        margin: 0 auto;
+        margin: 10em auto 0 auto;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
 
         .info {
             width: calc(100% / 6);
-            border: 1px solid black;
             position: relative;
+            margin: 3em 0.3em;
+            overflow: hidden;
+            gap: 1em;
+            border-radius: 5px;
+
+            &:hover {
+                transform: scale(1.4);
+                z-index: 1;
+                transition: ease-in-out 0.3s;
+
+                .cover {
+                    transform: scale(0.72);
+                }
+        
+                ul {
+                    opacity: 1;
+                }
+            }
 
             .cover {
                 width: 100%;
+                overflow: hidden;
+                border-radius: 5px;
             }
 
             ul {
@@ -134,9 +221,24 @@ export default {
                 position: absolute;
                 top: 0;
                 left: 0;
-                background-color: black;
+                background-color: rgba(20, 20, 20, 0.8);
+                opacity: 0;
                 width: 100%;
                 height: 100%;
+                border-radius: 5px;
+                box-shadow: 0px 0px 10px 5px #000000;
+                display: flex;
+                flex-flow: column nowrap;
+                padding: 1em;
+
+                .title {
+                    font-size: 1.5em;
+                    align-self: center;
+                }
+
+                .rias {
+                    margin: 1em 0;
+                }
 
                 li {
                     color: white;
@@ -152,6 +254,36 @@ export default {
 
 
             }
+        }
+    }
+
+    @media screen and (max-width: 1440px){
+        .container .info {
+            width: calc((100% / 4) - 2em);
+        }
+    }
+
+    @media screen and (max-width: 768px){
+        .container .info {
+            width: calc((100% / 2) - 2em);
+        }
+        .data .left ul,
+        .data .rigth .bell,
+        .data .rigth .user {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 375px){
+        .container .info {
+            width: 100%;
+            margin: 3em;
+        }
+        .data .left .logo {
+            display: none;
+        }
+        .data .left .logo-small {
+            display: block;
         }
     }
 </style>

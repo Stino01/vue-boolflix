@@ -16,5 +16,10 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "./style/general.scss"
+  @import "./style/general.scss";
+
+  html {
+    background-color: #242323;
+    font-family: sans-serif;
+  }
 </style>
