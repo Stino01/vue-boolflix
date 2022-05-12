@@ -1,13 +1,19 @@
 <template>
-    <div>     
+    <div>
+        <!-- SEARCH -->
         <div class="data">
             <input type="text" v-model="inputText">
             <button @click="getFilm">Cerca</button>
         </div>
+
+        <!-- DATA -->
         <div class="container">
             <div class="info" v-for="(data, index) in filmSeries" :key="index">
-                <ul>
-                    <!-- TITOLO -->
+                <!-- POSTER -->
+                <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" v-if="data.poster_path !== null" class="cover" @mouseover="hover = true" @mouseleave="hover = false">
+                <img src="@/assets/img/poster.jpg" :alt="data.title == null ? data.name : data.title" v-else class="cover" @mouseover="hover = true" @mouseleave="hover = false">
+                <ul v-if="hover">
+                     <!-- TITOLO -->
                     <li>
                         <strong>Titolo:</strong>
                         {{ data.title == null ? data.name : data.title }}
@@ -39,24 +45,20 @@
                             <font-awesome-icon :icon="['far', 'star']"/>
                         </span>
                     </li>
-
-                    <!-- POSTER -->
-                    <li v-if="data.poster_path !== null">
-                        <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" class="cover">
-                    </li>
-                    <li v-else>
-                        <img src="@/assets/img/poster.jpg" :alt="data.title == null ? data.name : data.title" class="cover">
+                    <!-- VERVIEW -->
+                    <li>
+                        <strong>Overview:</strong>
+                        {{data.overview}}
                     </li>
                 </ul>
             </div>
         </div>
+        
     </div>
 </template>
 
 <script>
 import axios from 'axios'
-
-//Trasformiamo poi il voto da 1 a 10 decimale in un numero intero da 1 a 5, così da permetterci di stampare a schermo un numero di stelle piene che vanno da 1 a 5, lasciando le restanti vuote (troviamo le icone in FontAwesome). Arrotondiamo sempre per eccesso all’unità successiva, non gestiamo icone mezze piene (o mezze vuote :P)
 
 export default {
   name: 'MainApp',
@@ -71,6 +73,7 @@ export default {
           seriesList: [],
           filmSeries: [],
           flag: ['it', 'en', 'es', 'fr'],
+          hover: false,
       }
   },
   methods: {
@@ -111,21 +114,33 @@ export default {
     }
 
     .container {
-        width: 80vw;
+        width: 90vw;
         margin: 0 auto;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 2em;
 
         .info {
-            width: calc((100% - 4em) / 3);
-            padding: 1em;
+            width: calc(100% / 6);
             border: 1px solid black;
-            border-radius: 10px;
+            position: relative;
+
+            .cover {
+                width: 100%;
+            }
 
             ul {
                 list-style-type: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: black;
+                width: 100%;
+                height: 100%;
+
+                li {
+                    color: white;
+                }
 
                 .language {
                     display: flex;
@@ -135,10 +150,7 @@ export default {
                     }
                 }
 
-                .cover {
-                    width: 100%;
-                    padding: 1em;
-                }
+
             }
         }
     }
