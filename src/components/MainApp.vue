@@ -16,7 +16,7 @@
                 </nav>
             </div>
             <div class="rigth">
-                <input type="text" v-model="inputText">
+                <input type="text" v-model="inputText" @keyup.enter="getFilm">
                 <button @click="getFilm"><font-awesome-icon :icon="['fas', 'magnifying-glass']"/></button>
                 <font-awesome-icon :icon="['fas', 'bell']" class="bell"/>
                 <img src="@/assets/img/user.jpg" alt="user" class="user">
@@ -24,7 +24,7 @@
         </header>
 
         <!-- DATA -->
-        <div class="container">
+        <div class="container" v-if="filmSeries !== []">
             <div class="info" v-for="(data, index) in filmSeries" :key="index">
                 <!-- POSTER -->
                 <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" v-if="data.poster_path !== null" class="cover">
@@ -62,14 +62,27 @@
                             <font-awesome-icon :icon="['far', 'star']"/>
                         </span>
                     </li>
-                    <!-- VERVIEW -->
+                    <!-- OVERVIEW -->
                     <li class="rias">
                         <strong>Overview:</strong>
                         {{data.overview}}
                     </li>
+                    <!-- ACTOR -->
+                    <li class="actor" v-if="actorList !== []">
+                        <strong>Actor:</strong>
+                        <ul>
+                            <li v-for="(actor, index) in actorList" :key="index">{{actor.name}}</li>
+                        </ul>
+                    </li>
+                    <!-- GENRES -->
+                    <li class="genres" v-if="filteredGenres !== []">
+                        <strong>Genres:</strong>
+                        <span v-for="(genre, index) in filteredGenres" :key="index">{{genre.name}}</span>
+                    </li>
                 </ul>
             </div>
         </div>
+        <span v-else>Non sono stati trovati film</span>
         
     </div>
 </template>
@@ -82,22 +95,25 @@ export default {
   data() {
       return {
           inputText: "",
-          apiUrl: "https://api.themoviedb.org/3/search/",
+          apiUrl: "https://api.themoviedb.org/3/",
           apiKey: "api_key=f09bcfe2f55857ee3aca9a399323b3ff",
           apiLenguage: "lenguage=it-IT",
           apiQuery: "",
           filmList: [],
           seriesList: [],
           filmSeries: [],
+          actorList: [],
+          genres: [],
+          filteredGenres: [],
           flag: ['it', 'en', 'es', 'fr'],
       }
   },
   methods: {
       getMovieApi() {
-          return axios.get(this.apiUrl + "movie?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage);
+          return axios.get(this.apiUrl + "search/movie?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage);
       },
       getSeriesApi() {
-          return axios.get(this.apiUrl + "tv?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage);
+          return axios.get(this.apiUrl + "search/tv?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage);
       },
       getFilm(){
           this.apiQuery = this.inputText.replaceAll(" ", "+")
@@ -106,11 +122,34 @@ export default {
               this.filmList = res[0].data.results
               this.seriesList = res[1].data.results
               this.filmSeries = this.filmList.concat(this.seriesList)
+              //console.log(this.filmSeries)
           }).catch((error) => {
             console.log(error)
           })
           this.inputText = ""
       },
+      getActor(){
+          axios.get(this.apiUrl + "search/movie/" + this.filmSeries.id + "/credits?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage).then((res) => {
+              this.actorList = res.data.cast
+              if (this.actorList.length >= 5) {
+                  this.actorList.length = 5
+              }
+          });
+      },
+      getGenres(){
+          axios.get(this.apiUrl + "genre/movie/list?" + this.apiKey + "&" + this.apiLenguage).then((res) => {
+              this.genres = res.genres
+              console.log(this.genres)
+          });
+      },
+      filterGenres(){
+          this.genres.forEach((el) => {
+              if (this.seriesList.genre_ids.includes(el.id)) {
+                  this.filteredGenres.push(el.name)
+                  console.log(this.filteredGenres)
+              }
+          })
+      }
   },
 }
 </script>
@@ -223,25 +262,25 @@ export default {
                 left: 0;
                 background-color: rgba(20, 20, 20, 0.8);
                 opacity: 0;
-                width: 100%;
                 height: 100%;
                 border-radius: 5px;
-                box-shadow: 0px 0px 10px 5px #000000;
+                // box-shadow: 0px 0px 10px 5px #000000;
                 display: flex;
                 flex-flow: column nowrap;
-                padding: 1em;
+                overflow-y: auto;
+                text-align: center;
+
+                li {
+                    color: white;
+                    padding: 0 1em;
+                }
 
                 .title {
                     font-size: 1.5em;
-                    align-self: center;
                 }
 
                 .rias {
                     margin: 1em 0;
-                }
-
-                li {
-                    color: white;
                 }
 
                 .language {
