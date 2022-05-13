@@ -1,27 +1,7 @@
 <template>
     <div>
         <!-- SEARCH -->
-        <header class="data">
-            <div class="left">
-                <img src="@/assets/img/logo.svg" alt="logo" class="logo">
-                <img src="@/assets/img/logo-small.svg" alt="logo-small" class="logo-small">
-                <nav>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Serie TV</a></li>
-                        <li><a href="#">Film</a></li>
-                        <li><a href="#">Nuovi e popolari</a></li>
-                        <li><a href="#">La mia lista</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="rigth">
-                <input type="text" v-model="inputText" @keyup.enter="getFilm">
-                <button @click="getFilm"><font-awesome-icon :icon="['fas', 'magnifying-glass']"/></button>
-                <font-awesome-icon :icon="['fas', 'bell']" class="bell"/>
-                <img src="@/assets/img/user.jpg" alt="user" class="user">
-            </div>
-        </header>
+        <header-app @search="getFilm"/>
 
         <!-- DATA -->
         <div class="container" v-if="filmSeries !== []">
@@ -83,18 +63,25 @@
             </div>
         </div>
         <span v-else>Non sono stati trovati film</span>
-        
+        <LoaderComponent v-if="loading"/>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
+import HeaderApp from "./HeaderApp.vue"
+import LoaderComponent from "./LoaderComponent.vue"
 
 export default {
   name: 'MainApp',
+  components: {
+      HeaderApp,
+      LoaderComponent
+  },
   data() {
       return {
           inputText: "",
+          loading: false,
           apiUrl: "https://api.themoviedb.org/3/",
           apiKey: "api_key=f09bcfe2f55857ee3aca9a399323b3ff",
           apiLenguage: "lenguage=it-IT",
@@ -115,19 +102,23 @@ export default {
       getSeriesApi() {
           return axios.get(this.apiUrl + "search/tv?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage);
       },
-      getFilm(){
+      getFilm(txt){
+          this.loading = true
+          this.inputText = txt
           this.apiQuery = this.inputText.replaceAll(" ", "+")
           //console.log(this.apiQuery)
           Promise.all([this.getMovieApi(), this.getSeriesApi()]).then((res) => {
               this.filmList = res[0].data.results
               this.seriesList = res[1].data.results
               this.filmSeries = this.filmList.concat(this.seriesList)
+              this.loading = false
               //console.log(this.filmSeries)
           }).catch((error) => {
             console.log(error)
           })
           this.inputText = ""
       },
+      //ATTORI
       getActor(){
           axios.get(this.apiUrl + "search/movie/" + this.filmSeries.id + "/credits?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage).then((res) => {
               this.actorList = res.data.cast
@@ -136,17 +127,18 @@ export default {
               }
           });
       },
+      //GENERI
       getGenres(){
           axios.get(this.apiUrl + "genre/movie/list?" + this.apiKey + "&" + this.apiLenguage).then((res) => {
               this.genres = res.genres
-              console.log(this.genres)
+              //console.log(this.genres)
           });
       },
       filterGenres(){
           this.genres.forEach((el) => {
               if (this.seriesList.genre_ids.includes(el.id)) {
                   this.filteredGenres.push(el.name)
-                  console.log(this.filteredGenres)
+                  //console.log(this.filteredGenres)
               }
           })
       }
@@ -270,9 +262,13 @@ export default {
                 overflow-y: auto;
                 text-align: center;
 
+                &::-webkit-scrollbar {
+                    width: 0;
+                }
+
                 li {
                     color: white;
-                    padding: 0 1em;
+                    padding: 1em 1em;
                 }
 
                 .title {
@@ -285,6 +281,7 @@ export default {
 
                 .language {
                     display: flex;
+                    justify-content: center;
 
                     .flag {
                         width: 1.5em;
