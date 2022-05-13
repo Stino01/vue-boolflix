@@ -4,7 +4,7 @@
         <header-app @search="getFilm"/>
 
         <!-- DATA -->
-        <div class="container" v-if="filmSeries !== []">
+        <div class="container" v-if="filmSeries.length > 0">
             <div class="info" v-for="(data, index) in filmSeries" :key="index">
                 <!-- POSTER -->
                 <img :src="`https://image.tmdb.org/t/p/w342${data.poster_path}`" :alt="data.title == null ? data.name : data.title" v-if="data.poster_path !== null" class="cover">
@@ -14,14 +14,6 @@
                     <li class="title">
                         {{ data.title == null ? data.name : data.title }}
                     </li>
-
-                    <!-- TITOLO ORIGINALE 
-                    <li>
-                        <strong>Titolo Originale:</strong>
-                        {{ data.original_title == null ? data.original_name : data.original_title }}
-                    </li>
-                    -->
-
                     <!-- LINGUA -->
                     <li v-if="!flag.includes(data.original_language)" class="language">
                         <strong>Lingua:</strong>
@@ -35,11 +27,9 @@
                     <!-- VOTO -->
                     <li class="voto">
                         <strong>Voto:</strong>
-                        <span v-for="(stars, index) in Math.round(data.vote_average / 2)" :key="index">
-                            <font-awesome-icon :icon="['fas', 'star']"/>
-                        </span>
-                        <span v-for="(stars, index) in 5 - Math.round(data.vote_average / 2)" :key="index">
-                            <font-awesome-icon :icon="['far', 'star']"/>
+                        <span v-for="index in 5" :key="index">
+                            <font-awesome-icon :icon="['fas', 'star']" v-if="index <= Math.round(data.vote_average / 2)"/>
+                            <font-awesome-icon :icon="['far', 'star']" v-else/>
                         </span>
                     </li>
                     <!-- OVERVIEW -->
@@ -47,22 +37,22 @@
                         <strong>Overview:</strong>
                         {{data.overview}}
                     </li>
-                    <!-- ACTOR -->
-                    <li class="actor" v-if="actorList !== []">
+
+                    <!-- <li class="actor" v-if="actorList">
                         <strong>Actor:</strong>
                         <ul>
                             <li v-for="(actor, index) in actorList" :key="index">{{actor.name}}</li>
                         </ul>
                     </li>
-                    <!-- GENRES -->
                     <li class="genres" v-if="filteredGenres !== []">
                         <strong>Genres:</strong>
                         <span v-for="(genre, index) in filteredGenres" :key="index">{{genre.name}}</span>
-                    </li>
+                    </li> -->
+
                 </ul>
             </div>
         </div>
-        <span v-else>Non sono stati trovati film</span>
+        <h1 v-else>Non hai ancora effettuato un aricerca adatta</h1>
         <LoaderComponent v-if="loading"/>
     </div>
 </template>
@@ -118,10 +108,10 @@ export default {
           })
           this.inputText = ""
       },
-      //ATTORI
+      /* ATTORI
       getActor(){
           axios.get(this.apiUrl + "search/movie/" + this.filmSeries.id + "/credits?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage).then((res) => {
-              this.actorList = res.data.cast
+              this.actorList.push(res.data.cast)
               if (this.actorList.length >= 5) {
                   this.actorList.length = 5
               }
@@ -141,12 +131,18 @@ export default {
                   //console.log(this.filteredGenres)
               }
           })
-      }
+      } */
   },
 }
 </script>
 
 <style lang="scss" scoped>
+    h1 {
+        text-align: center;
+        line-height: 50vw;
+        color: white;
+    }
+
     .data {
         display: flex;
         position: fixed;
