@@ -106,4 +106,22 @@ export default {
             }
         }
     }
+    @media screen and (max-width: 768px){
+        .data .left ul,
+        .data .rigth .bell,
+        .data .rigth .user {
+            display: none;
+        }
+    }
+    @media screen and (max-width: 375px){
+        .data {
+            padding: 1em 0;
+        }
+        .data .left .logo {
+            display: none;
+        }
+        .data .left .logo-small {
+            display: block;
+        }
+    }
 </style>
