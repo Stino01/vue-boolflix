@@ -30,11 +30,19 @@
                 <strong>Overview: </strong>
                 <span>{{item.overview}}</span>
             </li>
+            <!-- ATTORI -->
+            <li class="actor">
+                <strong>Actor:</strong>
+                <ul>
+                    <li v-for="(actor, index) in cast" :key="index">{{actor.name}}</li>
+                </ul>
+            </li>
         </ul>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
     name: "CardComponent",
@@ -50,6 +58,26 @@ export default {
         title(){
             return this.item.title ? this.item.title : this.item.name
         },
+        cast(){
+            return this.item.original_title ? this.movieCast : this.seriesCast
+        }, 
+    },
+    mounted(){
+        if (this.item.original_title) {
+            axios.get("https://api.themoviedb.org/3/movie/" + this.item.id + "/credits?api_key=f09bcfe2f55857ee3aca9a399323b3ff&lenguage=it-IT").then((res) => {
+                this.movieCast = res.data.cast;
+                if (this.movieCast.length >= 5){
+                    this.movieCast.length = 5
+                }
+            });
+        } else {
+            axios.get("https://api.themoviedb.org/3/tv/" + this.item.id + "/credits?api_key=f09bcfe2f55857ee3aca9a399323b3ff&lenguage=it-IT").then((res) => {
+                this.seriesCast = res.data.cast;
+                if (this.seriesCast.length >= 5){
+                    this.seriesCast.length = 5
+                }
+            });
+        }  
     },
 }
 </script>
@@ -121,6 +149,17 @@ export default {
 
                     .flag {
                         width: 1.5em;
+                    }
+                }
+
+                .actor {
+                    
+                    ul {
+                        list-style-type: none;
+
+                        li {
+                            padding: 0.2em 0;
+                        }
                     }
                 }
             }

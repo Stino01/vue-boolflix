@@ -55,16 +55,7 @@ export default {
             this.loading = false
           })
       },
-      /* ATTORI
-      getActor(){
-          axios.get(this.apiUrl + "search/movie/" + this.filmSeries.id + "/credits?" + this.apiKey + "&query=" + this.apiQuery + "&" + this.apiLenguage).then((res) => {
-              this.actorList.push(res.data.cast)
-              if (this.actorList.length >= 5) {
-                  this.actorList.length = 5
-              }
-          });
-      },
-      //GENERI
+      /* GENERI
       getGenres(){
           axios.get(this.apiUrl + "genre/movie/list?" + this.apiKey + "&" + this.apiLenguage).then((res) => {
               this.genres = res.genres

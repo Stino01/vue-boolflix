@@ -60,6 +60,7 @@ export default {
 
             .logo {
                 width: 10em;
+                cursor: pointer;
             }
 
             .logo-small {
@@ -67,6 +68,7 @@ export default {
                 padding: 0.2em;
                 margin-left: 1em;
                 display: none;
+                cursor: pointer;
             }
 
             ul {
@@ -74,10 +76,10 @@ export default {
                 list-style-type: none;
 
                 li {
-                    padding: 0.4em;
+                    padding: 0.3em;
                     a {
                         text-decoration: none;
-                         color: white;
+                        color: white;
                         font-size: 0.9em;
                     }
                 }
@@ -87,6 +89,7 @@ export default {
                 width: 2em;
                 border-radius: 5px;
                 margin: 0 1em;
+                cursor: pointer;
             }
 
             input {
@@ -103,6 +106,7 @@ export default {
                 margin-right: 1em;
                 cursor: pointer;
                 color: white;
+                cursor: pointer;
             }
         }
     }
